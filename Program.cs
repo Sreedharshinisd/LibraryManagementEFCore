@@ -22,3 +22,4 @@ using var serviceProvider = services.BuildServiceProvider();
 Console.WriteLine("Library Management System");
 Console.WriteLine("Services registered successfully.");
 services.AddScoped<IBookService, BookService>();
+services.AddScoped<IMemberService, MemberService>();
