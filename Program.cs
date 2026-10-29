@@ -34,6 +34,7 @@ while (true)
     Console.WriteLine("6. Search Member by ID");
     Console.WriteLine("7. Borrow Book");
     Console.WriteLine("8. Return Book");
+    Console.WriteLine("9. View Borrowing History");
     Console.WriteLine("0. Exit");
     Console.Write("Choose an option: ");
     var choice = Console.ReadLine();

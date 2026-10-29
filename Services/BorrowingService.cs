@@ -2,6 +2,7 @@
 using LibraryManagementEFCore.Data;
 using LibraryManagementEFCore.Interfaces;
 using LibraryManagementEFCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementEFCore.Services;
 
@@ -14,6 +15,7 @@ public class BorrowingService : IBorrowingService
         _context = context;
     }
 
+    // Borrow a book
     public async Task BorrowBookAsync(int bookId, int memberId)
     {
         var book = await _context.Books.FindAsync(bookId);
@@ -43,12 +45,15 @@ public class BorrowingService : IBorrowingService
         await _context.SaveChangesAsync();
     }
 
+    // Return a borrowed book
     public async Task ReturnBookAsync(int borrowRecordId)
     {
-        var record = await _context.BorrowRecords.FindAsync(borrowRecordId);
+        var record = await _context.BorrowRecords
+            .FindAsync(borrowRecordId);
 
         if (record == null)
-            throw new InvalidOperationException("Borrow record not found.");
+            throw new InvalidOperationException(
+                "Borrow record not found.");
 
         if (record.IsReturned)
             throw new InvalidOperationException(
@@ -64,5 +69,16 @@ public class BorrowingService : IBorrowingService
         book.AvailableCopies++;
 
         await _context.SaveChangesAsync();
+    }
+
+    // View borrowing history
+    public async Task<List<BorrowRecord>> GetBorrowingHistoryAsync()
+    {
+        return await _context.BorrowRecords
+            .Include(record => record.Book)
+            .Include(record => record.Member)
+            .AsNoTracking()
+            .OrderByDescending(record => record.BorrowDate)
+            .ToListAsync();
     }
 }
